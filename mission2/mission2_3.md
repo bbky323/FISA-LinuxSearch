@@ -133,4 +133,5 @@ rm-f temp_env.txt
 echo-e"\n===== 검사 완료 =====" >>$OUTPUT
 ```
 
-## 📊정답 결과 <img width="1632" height="338" alt="image" src="./mission2_3.png" />
+## 📊정답 결과 
+<img width="600" height="800" alt="image" src="./mission2_3.png" />
