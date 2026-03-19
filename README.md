@@ -18,25 +18,25 @@
 
 ## 📌 Mission1
 
-### ❓ [문제 1 - 장애 발생 후 에러 로그 추적 문제](./mission1/mission1_1.md)
+### ❓ [문제 1 - 장애 발생 후 에러 로그 추적](./mission1/mission1_1.md)
 
-### ❓ [문제 2 - 장애 발생 후 에러 로그 추적 문제](./mission1/mission1_2.md)
+### ❓ [문제 2 - SSH 공격 로그 분석](./mission1/mission1_2.md)
 
-### ❓ [문제 3 - 장애 발생 후 에러 로그 추적 문제](./mission1/mission1_3.md)
+### ❓ [문제 3 - 파일 권한 및 소유자 점검 자동화](./mission1/mission1_3.md)
 
-### ❓ [문제 4 - 장애 발생 후 에러 로그 추적 문제](./mission1/mission1_4.md)
+### ❓ [문제 4 - 서비스 가용성 확보를 위한 임시 파일 자동 정리](./mission1/mission1_4.md)
 
 ### ❓ [문제 5 - 장애 발생 후 에러 로그 추적 문제](./mission1/mission1_5.md)
 
 ## 📌 Mission2
 
-### ❓ [문제 1 - 장애 발생 후 에러 로그 추적 문제](./mission2/mission2_1.md)
+### ❓ [문제 1 - API 응답 JSON 검수](./mission2/mission2_1.md)
 
-### ❓ [문제 2 - 장애 발생 후 에러 로그 추적 문제](./mission2/mission2_2.md)
+### ❓ [문제 2 - JSON 로그(JSONL)에서 이상 이벤트 추출](./mission2/mission2_2.md)
 
-### ❓ [문제 3 - 장애 발생 후 에러 로그 추적 문제](./mission2/mission2_3.md)
+### ❓ [문제 3 - Kubernetes 배포 YAML 검수](./mission2/mission2_3.md)
 
-### ❓ [문제 4 - 장애 발생 후 에러 로그 추적 문제](./mission2/mission2_4.md)
+### ❓ [문제 4 - 서비스 가용성 확보를 위한 임시 파일 자동 정리](./mission2/mission2_4.md)
 
-### ❓ [문제 5 - 장애 발생 후 에러 로그 추적 문제](./mission2/mission2_5.md)
+### ❓ [문제 5 - Shell 스크립트를 활용한 JSON/YAML 설정 파일 보안 및 문법 자동 검사](./mission2/mission2_5.md)
 
