@@ -4,17 +4,17 @@
 ## 문제
 - 4-1.<br>
    config/ 폴더 내에서 application-으로 시작하는 .yaml 파일을 찾고, application-prod.yaml의 전체 구조를 Properties 형식으로 출력하시오.
-- 4-2.
+- 4-2.<br>
   application-prod.yaml에 api.payment.timeout 키가 없으면 경고 문구를 출력하시오.
-- 4-3.
+- 4-3.<br>
   개발(dev)과 운영(prod)의 spring.datasource.url이 같으면 경고를 출력하시오.
-- 4-4.
+- 4-4.<br>
   운영 환경의 jwt.secret이 16자 미만이면 에러를 내고 종료하시오.
-- 4-5.
+- 4-5.<br>
   두 파일의 모든 차이점을 주석 없이 config_diff.txt에 저장하고 완료 시간을 기록하시오.
 
 ## 풀이
-- 환경 세팅
+- 환경 세팅<br>
   실습 파일 자동 생성 스크립트
   ```
   mkdir -p config
