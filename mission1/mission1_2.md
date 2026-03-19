@@ -1,4 +1,4 @@
-## 🛡️상황 가정
+#### 가정 상황
 
 보안팀으로부터 다음과 같은 알림을 받았다.
 
@@ -12,7 +12,7 @@
 
 ---
 
-## ❓문제
+#### 문제
 
 시스템 인증 로그 (auth.log)를 분석하여 다음을 수행하시오. 
 
@@ -63,7 +63,7 @@ Mar 19 01:27:55 server sshd[1253]: Failed password for invalid user admin from 2
 
 ---
 
-## 💡풀이
+#### 풀이
 
 ```jsx
 grep "Failed password" auth.log > temp.txt
@@ -74,7 +74,7 @@ grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" temp.txt \
 | awk '{count[$1]++} END {for (ip in count) print count[ip], ip}'\
 > ssh_attack_summary.txt
 ```
-### 1️⃣ SSH 실패 로그 추출
+### 1️단계. SSH 실패 로그 추출
 
 ```
 grep"Failed password" auth.log > temp.txt
@@ -82,11 +82,11 @@ grep"Invalid user" auth.log >> temp.txt
 grep"authentication failure" auth.log >> temp.txt
 ```
 
-👉 다양한 실패 유형을 각각 추출하여 하나의 파일로 통합
+ 다양한 실패 유형을 각각 추출하여 하나의 파일로 통합
 
 ---
 
-### 2️⃣ IP 주소 추출 및 집계
+### 2️단계. IP 주소 추출 및 집계
 
 ```
 grep-Eo"([0-9]{1,3}\.){3}[0-9]{1,3}" temp.txt \
@@ -100,14 +100,14 @@ grep-Eo"([0-9]{1,3}\.){3}[0-9]{1,3}" temp.txt \
 
 ---
 
-### 3️⃣ 결과 파일 저장
+### 3️단계. 결과 파일 저장
 
 ```
 grep-Eo"([0-9]{1,3}\.){3}[0-9]{1,3}" temp.txt \
 |awk'{count[$1]++} END {for (ip in count) print count[ip], ip}' \
 > ssh_attack_summary.txt
 ```
-## 📊결과
+#### 정답 결과 <img width="1632" height="338" alt="image" src="./mission1_2.png" />
 
 
 
