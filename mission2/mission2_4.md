@@ -2,7 +2,7 @@
 - 당신은 DevOps 엔지니어입니다. 새로운 서비스 배포 직전, 개발 환경(dev)과 운영 환경(prod)의 설정 파일 불일치로 인한 장애를 막기 위해 검수 스크립트를 작성해야 합니다.
   
 ## 문제
-- 4-1.
+- 4-1.<br>
    config/ 폴더 내에서 application-으로 시작하는 .yaml 파일을 찾고, application-prod.yaml의 전체 구조를 Properties 형식으로 출력하시오.
 - 4-2.
   application-prod.yaml에 api.payment.timeout 키가 없으면 경고 문구를 출력하시오.
