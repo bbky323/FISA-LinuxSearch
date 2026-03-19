@@ -1,6 +1,6 @@
 ## 가정 상황
 - 당신은 DevOps 엔지니어입니다. 새로운 서비스 배포 직전, 개발 환경(dev)과 운영 환경(prod)의 설정 파일 불일치로 인한 장애를 막기 위해 검수 스크립트를 작성해야 합니다.
-- 
+  
 ## 문제
 - 4-1.
    config/ 폴더 내에서 application-으로 시작하는 .yaml 파일을 찾고, application-prod.yaml의 전체 구조를 Properties 형식으로 출력하시오.
@@ -62,108 +62,91 @@
 
 - Step 1 : 설정 파일 탐색 및 구조 확인
   [풀이]
-  ```
-  # 1. 파일 찾기
-  find config/ -name "application-*.yaml" -o -name "application-*.yml"
-  
-  # 2. 구조 확인
-  yq -o=props config/application-prod.yaml
-  ```
+     ```
+     # 1. 파일 찾기
+     find config/ -name "application-*.yaml" -o -name "application-*.yml"
+     
+     # 2. 구조 확인
+     yq -o=props config/application-prod.yaml
+     ```
   [설명]
-  ```
-  yq -o=props
-  ```
-  - YAML의 계층 구조를 a.b.c. = value 형태의 Properties 포맷으로 출력. 
-복잡한 들여쓰기를 한 줄의 텍스트로 변환하여 구조 파악이 쉽게 만들어줌.
+     ```
+     yq -o=props
+     ```
+     - YAML의 계층 구조를 a.b.c. = value 형태의 Properties 포맷으로 출력. 
+   복잡한 들여쓰기를 한 줄의 텍스트로 변환하여 구조 파악이 쉽게 만들어줌.
 
 - Step 2 : 특정 환경(Prod)의 설정 누락 여부 검사
   [풀이]
-  ```
-  [ "$(yq '.api.payment.timeout' config/application-prod.yaml)" == "null" ] && echo "WARNING: Timeout setting missing!"
-  ```
+     ```
+     [ "$(yq '.api.payment.timeout' config/application-prod.yaml)" == "null" ] && echo "WARNING: Timeout setting missing!"
+     ```
   [설명]
-  ```
-  yq '.api.payment.timeout'
-  ```
-  - 점(.)으로 구분된 경로를 따라가 해당 값을 가져옵니다. 만약 해당 경로에 데이터가 없으면 yq는 문자열 null을 반환합니다.
-  ```
-  $( ... )
-  ```
-  - 명령어 치환으로 괄호 안의 실행 결과를 텍스트로 가져와 비교문에 넣습니다.
-  ```
-  [ A == B ] && C
-  ```
-  - 단축 평가 방식으로 앞의 조건( [ … ] )이 참이면 && 뒤의 명령어를 실행합니다.
+     ```
+     yq '.api.payment.timeout'
+     ```
+     - 점(.)으로 구분된 경로를 따라가 해당 값을 가져옵니다. 만약 해당 경로에 데이터가 없으면 yq는 문자열 null을 반환합니다.
+     ```
+     $( ... )
+     ```
+     - 명령어 치환으로 괄호 안의 실행 결과를 텍스트로 가져와 비교문에 넣습니다.
+     ```
+     [ A == B ] && C
+     ```
+     - 단축 평가 방식으로 앞의 조건( [ … ] )이 참이면 && 뒤의 명령어를 실행합니다.
 - Step 3 : 환경 간 데이터베이스 URL 불일치 리포트 생성
-  [풀이]
-  ```
-   DEV_URL=$(yq '.spring.datasource.url' config/application-dev.yaml)
-   PROD_URL=$(yq '.spring.datasource.url' config/application-prod.yaml)
-   
-   if [ "$DEV_URL" == "$PROD_URL" ]; then
-       echo "🚨 CRITICAL: Dev DB used in Prod!"
-   fi
-   ```
-[설명]
-```
-VAR=$(...)
-```
-- yq로 추출한 DB 접속 주소를 변수에 저장합니다.
-```
-if [ "$A" == "$B" ; then
-```
-- 두 변수의 값이 일차하는지 비교한 뒤, 운영 서버 설정 파일에 실수로 개발용 DB 주소가 적혀있는 사고를 막는 로직입니다.
-- 참고
-  - 변수를 따옴표(”)로 감싸는 이유는 값이 비어있을 때 발생할 수 있는 구문 오류를 방지하기 위함입니다.
+     [풀이]
+     ```
+      DEV_URL=$(yq '.spring.datasource.url' config/application-dev.yaml)
+      PROD_URL=$(yq '.spring.datasource.url' config/application-prod.yaml)
+      
+      if [ "$DEV_URL" == "$PROD_URL" ]; then
+          echo "🚨 CRITICAL: Dev DB used in Prod!"
+      fi
+     ```
+     [설명]
+      ```
+      VAR=$(...)
+      ```
+      - yq로 추출한 DB 접속 주소를 변수에 저장합니다.
+      ```
+      if [ "$A" == "$B" ; then
+      ```
+      - 두 변수의 값이 일차하는지 비교한 뒤, 운영 서버 설정 파일에 실수로 개발용 DB 주소가 적혀있는 사고를 막는 로직입니다.
+      - 참고
+        - 변수를 따옴표(”)로 감싸는 이유는 값이 비어있을 때 발생할 수 있는 구문 오류를 방지하기 위함입니다.
 
 - Step 4 : 보안 준수 사항 검사 (Secret Key 검증)
   
-  [풀이]
-  ```
-   PROD_SECRET=$(yq '.jwt.secret' config/application-prod.yaml)
-   if [ ${#PROD_SECRET} -lt 16 ]; then
-       echo "❌ ERROR: JWT Secret is too short."
-       exit 1
-   fi
-   ```
-[설명]
-```
-${PROD_SECRET}
-```
-- shell script의 내장 기능으로, 변수에 담긴 문자열의 길이를 반환합니다. 
-```
-exit 1
-```
-- 스크립트를 비정상 종료 상태 코드로 마칩니다. CI/CD 파이프라인에서 이 명령어를 만나면 배포가 즉시 중단됩니다.
-- Step 5 : 최종 검수 자동화 및 리포트 파일 저장
-  [풀이]
-  ```
-# 1. 평탄화된 임시 파일 생성
-```
-yq -o=props config/application-dev.yaml > dev.tmp
-yq -o=props config/application-prod.yaml > prod.tmp
-```
-
-# 2. 비교 결과 저장
-```
-echo "--- Configuration Diff Report ---" > config_diff.txt
-diff -u dev.tmp prod.tmp >> config_diff.txt || true
-```
-
-# 3. 마무리
-```
-echo "검수 완료 시간: $(date)" >> config_diff.txt
-rm *.tmp
-```
-[설명]
-```
-diff -u
-```
-- Unified diff 모드로, 바뀐 부분만 보여주는게 아니라, 변경된 줄의 앞뒤 문맥을  + (추가), - (삭제) 기호와 함께 보여주어 가독성이 매우 뛰어납니다.
-```
-|| true
-```
-- diff는 두 파일이 다르면 종료 코드 1을 반환합니다. 스크립트가 여기서 멈추지 않고 다음 단계(시간 기록)로 넘어가기 위해서 에러가 나도 성공한것으로 간주해라는 의미로 붙여줍니다.
+     [풀이]
+     ```
+      PROD_SECRET=$(yq '.jwt.secret' config/application-prod.yaml)
+      if [ ${#PROD_SECRET} -lt 16 ]; then
+          echo "❌ ERROR: JWT Secret is too short."
+          exit 1
+      fi
+     ```
+   [설명]
+      ```
+      ${PROD_SECRET}
+      ```
+      - shell script의 내장 기능으로, 변수에 담긴 문자열의 길이를 반환합니다. 
+      ```
+      exit 1
+      ```
+      - 스크립트를 비정상 종료 상태 코드로 마칩니다. CI/CD 파이프라인에서 이 명령어를 만나면 배포가 즉시 중단됩니다.
+      - Step 5 : 최종 검수 자동화 및 리포트 파일 저장
+     [풀이]
+  
+   [설명]
+      ```
+      diff -u
+      ```
+      - Unified diff 모드로, 바뀐 부분만 보여주는게 아니라, 변경된 줄의 앞뒤 문맥을  + (추가), - (삭제) 기호와 함께 보여주어 가독성이 매우 뛰어납니다.
+      ```
+      || true
+      ```
+      - diff는 두 파일이 다르면 종료 코드 1을 반환합니다. 스크립트가 여기서 멈추지 않고 다음 단계(시간 기록)로 넘어가기 위해서 에러가 나도 성공한것으로 간주해라는 의미로 붙여줍니다.
 
 - 결과
   <br>
