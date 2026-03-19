@@ -69,6 +69,8 @@ bash ./scripts/mission_jsonl_error_report.sh
 # 생성된 리포트 확인
 cat ./logs/error_events_report.txt
 ```
+![sh이미지](./mission2_2_1.png)
+
 #### 7단계. 최종 결과를 리포트 파일로 저장하기
 추출 결과와 집계 결과를 하나의 리포트 파일에 저장하는 스크립트를 실행한다.
 
@@ -94,8 +96,8 @@ crontab -e
 
 2. userId별 에러 건수 집계 결과
 
-
 3. timeout 또는 Exception 포함 로그 저장 결과
-
+![sh이미지](./mission2_2_2.png)
 
 4. 자동 실행 확인 결과 (cron_jsonl.log)
+![sh이미지](./mission2_2_3.png)
