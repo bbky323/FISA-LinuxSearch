@@ -194,6 +194,7 @@
 
 
 - 결과
+  <br>
   <img src="./mission1_5.png" width="500">
   
     
