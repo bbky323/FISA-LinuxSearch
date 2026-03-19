@@ -26,7 +26,7 @@
 
 ### ❓ [문제 4 - 서비스 가용성 확보를 위한 임시 파일 자동 정리](./mission1/mission1_4.md)
 
-### ❓ [문제 5 - 장애 발생 후 에러 로그 추적 문제](./mission1/mission1_5.md)
+### ❓ [문제 5 - 평문 비밀번호 노출 여부 검사](./mission1/mission1_5.md)
 
 ## 📌 Mission2
 
