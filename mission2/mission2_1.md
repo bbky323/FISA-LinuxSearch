@@ -1,9 +1,11 @@
-### 가정 상황
+#  ❓문제 1 - API 응답 JSON 검수 문제
+
+## 📚가정 상황
 
 - 결제 서비스 API를 새 버전으로 교체한 뒤, 프론트엔드 팀이 “응답 JSON 구조가 일부 달라져서 화면이 깨진다”고 보고했다.
 - 운영자는 서버에 저장된 API 샘플 응답 파일들을 빠르게 검수해야 한다.
 
-### 문제
+## 🤔문제
 
 - 여러 개의 API 응답 JSON 파일 중에서 다음 조건을 점검하시오.
     - JSON 문법이 올바른 파일만 선별
@@ -12,7 +14,7 @@
     - `status`가 `"success"`인 응답만 추출
     - 결과를 `api_validation_report.txt`로 저장
 
-### 풀이
+## 📝풀이
 
 ### 1단계. JSON 문법이 올바른 파일만 선별하기
 
@@ -118,6 +120,6 @@ done
 
 ---
 
-### 정답 결과
+## ✅정답 결과
 <img width="1040" height="405" alt="image" src="https://github.com/user-attachments/assets/8dea60e5-4d64-47f5-b135-6e24fbffdb76" />
 
