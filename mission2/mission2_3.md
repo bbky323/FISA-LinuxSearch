@@ -74,6 +74,54 @@ data:
 
 ## 💡풀이
 
+### 1️단계. YAML 문법 검사
+
+```
+yamllint deployment.yamlservice.yaml configmap.yaml
+```
+
+👉 모든 YAML 파일의 문법 오류 확인
+
+---
+
+### 2️단계. replicas 정책 검사
+
+```
+replicas=$(yq'.spec.replicas' deployment.yaml)
+```
+
+👉 replicas 값이 2 이상인지 검증
+
+---
+
+### 3️단계. 이미지 태그 검사
+
+```
+yq'.spec.template.spec.containers[].image' deployment.yaml
+```
+
+👉 `latest` 태그 사용 여부 확인
+
+---
+
+### 4️단계. resources 설정 검사
+
+```
+yq'.spec.template.spec.containers[].resources' deployment.yaml
+```
+
+👉 requests / limits 존재 여부 확인
+
+---
+
+### 5️단계. 환경변수 보안 검사
+
+```
+yq'.spec.template.spec.containers[].env[]' deployment.yaml |grep-i"password\|secret"
+```
+
+👉 민감정보 평문 포함 여부 확인
+
 ## 전체 스크립트
 
 ```
