@@ -80,7 +80,7 @@ data:
 yamllint deployment.yamlservice.yaml configmap.yaml
 ```
 
-👉 모든 YAML 파일의 문법 오류 확인
+ 모든 YAML 파일의 문법 오류 확인
 
 ---
 
@@ -90,7 +90,7 @@ yamllint deployment.yamlservice.yaml configmap.yaml
 replicas=$(yq'.spec.replicas' deployment.yaml)
 ```
 
-👉 replicas 값이 2 이상인지 검증
+ replicas 값이 2 이상인지 검증
 
 ---
 
@@ -100,7 +100,7 @@ replicas=$(yq'.spec.replicas' deployment.yaml)
 yq'.spec.template.spec.containers[].image' deployment.yaml
 ```
 
-👉 `latest` 태그 사용 여부 확인
+ `latest` 태그 사용 여부 확인
 
 ---
 
@@ -110,7 +110,7 @@ yq'.spec.template.spec.containers[].image' deployment.yaml
 yq'.spec.template.spec.containers[].resources' deployment.yaml
 ```
 
-👉 requests / limits 존재 여부 확인
+ requests / limits 존재 여부 확인
 
 ---
 
@@ -120,7 +120,7 @@ yq'.spec.template.spec.containers[].resources' deployment.yaml
 yq'.spec.template.spec.containers[].env[]' deployment.yaml |grep-i"password\|secret"
 ```
 
-👉 민감정보 평문 포함 여부 확인
+ 민감정보 평문 포함 여부 확인
 
 ## 전체 스크립트
 
