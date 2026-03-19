@@ -60,7 +60,7 @@
    echo "✅ 실습 환경 준비 완료! 'config' 폴더를 확인하세요."
    ```
 
-- Step 1 : 설정 파일 탐색 및 구조 확인
+- Step 1 : 설정 파일 탐색 및 구조 확인<br>
   [풀이]
      ```
      # 1. 파일 찾기
@@ -74,9 +74,9 @@
      yq -o=props
      ```
      - YAML의 계층 구조를 a.b.c. = value 형태의 Properties 포맷으로 출력. 
-   복잡한 들여쓰기를 한 줄의 텍스트로 변환하여 구조 파악이 쉽게 만들어줌.
+   복잡한 들여쓰기를 한 줄의 텍스트로 변환하여 구조 파악이 쉽게 만들어줌.<br>
 
-- Step 2 : 특정 환경(Prod)의 설정 누락 여부 검사
+- Step 2 : 특정 환경(Prod)의 설정 누락 여부 검사<br>
   [풀이]
      ```
      [ "$(yq '.api.payment.timeout' config/application-prod.yaml)" == "null" ] && echo "WARNING: Timeout setting missing!"
@@ -93,8 +93,9 @@
      ```
      [ A == B ] && C
      ```
-     - 단축 평가 방식으로 앞의 조건( [ … ] )이 참이면 && 뒤의 명령어를 실행합니다.
-- Step 3 : 환경 간 데이터베이스 URL 불일치 리포트 생성
+     - 단축 평가 방식으로 앞의 조건( [ … ] )이 참이면 && 뒤의 명령어를 실행합니다.<br>
+     
+- Step 3 : 환경 간 데이터베이스 URL 불일치 리포트 생성<br>
      [풀이]
      ```
       DEV_URL=$(yq '.spring.datasource.url' config/application-dev.yaml)
