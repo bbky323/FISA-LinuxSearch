@@ -84,6 +84,7 @@ total 0
 #### 4단계. 점검 스크립트 작성
 
 조건별 파일을 탐지하고 로그 파일에 기록하는 permission_audit.sh 스크립트를 작성한다.
+![실행결과](./mission1_3_1.png)
 
 #### 5단계. 실행 권한 부여 및 로그 초기화
 
@@ -105,3 +106,4 @@ cat /home/ubuntu/3/logs/permission_audit.log
 ### 정답 결과
 
 실행 결과는 다음과 같이 출력된다.
+![실행결과](./mission1_3_2.png)
