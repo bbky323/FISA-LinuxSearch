@@ -126,7 +126,7 @@
           exit 1
       fi
      ```
-   [설명]
+     [설명]
       ```
       ${PROD_SECRET}
       ```
@@ -135,10 +135,22 @@
       exit 1
       ```
       - 스크립트를 비정상 종료 상태 코드로 마칩니다. CI/CD 파이프라인에서 이 명령어를 만나면 배포가 즉시 중단됩니다.
-      - Step 5 : 최종 검수 자동화 및 리포트 파일 저장
+  - Step 5 : 최종 검수 자동화 및 리포트 파일 저장
      [풀이]
-  
-   [설명]
+      ```
+      # 1. 평탄화된 임시 파일 생성
+      yq -o=props config/application-dev.yaml > dev.tmp
+      yq -o=props config/application-prod.yaml > prod.tmp
+      
+      # 2. 비교 결과 저장
+      echo "--- Configuration Diff Report ---" > config_diff.txt
+      diff -u dev.tmp prod.tmp >> config_diff.txt || true
+      
+      # 3. 마무리
+      echo "검수 완료 시간: $(date)" >> config_diff.txt
+      rm *.tmp
+      ```
+     [설명]
       ```
       diff -u
       ```
