@@ -33,17 +33,6 @@ find "./linux_mission1/log" -type f \( -name "*.log" -o -name "*.out" \) -mtime 
 | `-mtime -3` | 최근 3일 이내 수정된 파일 |
 | `-size +0c` | 0바이트 초과 파일 |
 
-<details>
-<summary>설명 보기</summary>
-
-- `find`는 파일이나 디렉토리를 검색할 때 사용하는 명령어이다.
-- `-type f`를 사용하여 디렉토리를 제외하고 일반 파일만 검색한다.
-- `-name "*.log" -o -name "*.out"`는 `.log` 또는 `.out` 파일을 의미한다.
-- `-mtime -3`은 최근 3일 이내 수정된 파일만 찾는 조건이다.
-- `-size +0c`는 비어 있지 않은 파일만 찾는 조건이다.
-
-</details>
-
 ---
 
 ### 2단계. 찾은 파일에서 에러 패턴 추출하기
@@ -65,16 +54,6 @@ find "./linux_mission1/log" -type f \( -name "*.log" -o -name "*.out" \) -mtime 
 | `{}` | 현재 검색된 파일 경로가 들어가는 자리 |
 | `\;` | `-exec` 종료 표시 |
 
-<details>
-<summary>설명 보기</summary>
-
-- `find`로 찾은 파일 각각에 대해 `grep`을 실행한다.
-- `grep -HnE`는 파일 이름, 줄 번호, 확장 정규표현식을 함께 사용하는 형태이다.
-- `ERROR`, `FATAL`, `Exception`, `timeout` 중 하나라도 포함된 줄이 출력된다.
-- `{}`는 현재 검색 중인 파일명을 의미하며, `\;`는 `-exec`의 끝을 나타낸다.
-
-</details>
-
 ---
 
 ### 3단계. 검색 결과를 파일로 저장하기
@@ -91,15 +70,6 @@ cat error_report.txt
 | `>` | 표준출력을 파일로 저장 |
 | `error_report.txt` | 검색 결과 저장 파일 |
 | `cat` | 파일 내용을 그대로 출력 |
-
-<details>
-<summary>설명 보기</summary>
-
-- `>`를 사용하면 화면 출력 대신 파일에 결과를 저장할 수 있다.
-- 여기서는 에러 검색 결과를 `error_report.txt`에 저장한다.
-- 이후 `cat error_report.txt`를 통해 저장된 내용을 바로 확인할 수 있다.
-
-</details>
 
 ---
 
@@ -136,15 +106,6 @@ awk -F: '{count[$1]++} END {for (f in count) print count[f], f}' error_report.tx
 | `-n` | 숫자 기준 정렬 |
 | `-r` | 역순 정렬 (내림차순) |
 
-<details>
-<summary>설명 보기</summary>
-
-- `awk`로 집계한 결과를 `sort`에 전달한다.
-- `-n`은 숫자 기준으로 정렬하는 옵션이다.
-- `-r`은 역순 정렬로, 큰 숫자부터 출력되도록 한다.
-- 따라서 에러 개수가 많은 파일이 가장 위에 오게 된다.
-
-</details>
 
 ## 정답 결과
 
