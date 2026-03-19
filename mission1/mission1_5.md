@@ -194,6 +194,6 @@
 
 
 - 결과
-  ./mission1_5.png
+  <img src="./mission1_5.png" width="500">
   
     
