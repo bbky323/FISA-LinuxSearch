@@ -2,20 +2,20 @@
 - 개발자가 제보한 "평문 비밀번호 노출 의심" 건을 조사해야 합니다. 전체 서버를 뒤지면 시간이 너무 오래 걸리므로, 특정 디렉토리의 최근 수정된 설정/스크립트 파일만 추려내어 정규표현식으로 위험 패턴을 색출하는 파이프라인을 구축하시오.
 - 
 ## 문제
-- 5-1.
+- 5-1.<br>
    /etc, /opt/app/config, /home/dev/scripts 디렉토리에서 최근 14일 이내에 수정된 파일 중 확장자가 .conf, .env, .yml, .yaml, .sh인 파일만 검색하는 find 명령어를 작성하시오.
-- 5-2.
+- 5-2.<br>
   5-1. 에서 찾은 파일들을 대상으로, 대소문자 구분 없이 아래 패턴 중 하나라도 포함된 라인을 찾으시오. (결과에 파일명과 라인 번호가 출력되어야 함)
   탐지 패턴: `password=`, `passwd=`, `SECRET_KEY`, `API_KEY`, `token`, AWS Access Key 형식(`AKIA`로 시작하는 20자리 영문대문자/숫자)
-- 5-3.
+- 5-3.<br>
   5-2. 의 결과 중, 코드 맨 앞이 #으로 시작하는 주석 처리된 라인은 실제 실행되지 않으므로 결과에서 제외하시오. 
   (단, # 앞에 들여쓰기 공백이나 탭이 있는 경우도 주석으로 간주하여 걸러내야 함)
-- 5-4.
+- 5-4.<br>
   최종 필터링된 결과를 `awk`를 사용하여 아래의 규격화된 포맷으로 변환하고, `secret_scan_report.txt` 파일로 저장하시오.
   출력 포맷: `[위험탐지] 파일: <경로> | 라인: <줄번호> | 내용: <매칭된 내용>`
   
 ## 풀이
-- 환경 세팅
+- 환경 세팅<br>
   1. setup_dummy.sh 파일 생성
     ```
     vi setup_dummy.sh
@@ -100,8 +100,8 @@
            └── config
                └── database.yml
    ```
-- 5-1. 대상 파일 추려내기 (find 기초)
-  [정답]
+- 5-1. 대상 파일 추려내기 (find 기초)<br>
+  [정답]<br>
   - 지정한 폴더에서 조건에 맞는 파일들만 솎아내는 작업
     ```
     find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \)
@@ -122,9 +122,9 @@
     ```
       -name "*.conf" -o -name "*.env" ...
      ```
-- 파일 이름의 조건을 주어 -o는 OR라는 뜻으로 나열된 확장 중 하나라도 일치하는 파일들만 찾기
-- 5-2. : 민감 정보 패턴 감지 (grep + 정규표현식)
-  [정답]
+- 파일 이름의 조건을 주어 -o는 OR라는 뜻으로 나열된 확장 중 하나라도 일치하는 파일들만 찾기<br>
+- 5-2. : 민감 정보 패턴 감지 (grep + 정규표현식)<br>
+  [정답]<br>
   - 찾아낸 파일들의 내부 텍스트를 열어보고, 위험한 패턴이 있는지 검사
     ```
     find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec grep -iHnE "password=|passwd=|SECRET_KEY|API_KEY|token|AKIA[0-9A-Z]{16}" {} +
@@ -137,9 +137,9 @@
      ```
      AKIA[0-9A-Z]{16}
      ```
-  - AWS Access Key를 찾는 정규표현식. AKIA로 시작하고 그 뒤에 숫자나 대문자 영어가 정확히 16글자 오는 문자열을 뜻함
-  - 5-3. : 오탐지 제거 - 주석 제외 (grep -v)
-    [정답]
+  - AWS Access Key를 찾는 정규표현식. AKIA로 시작하고 그 뒤에 숫자나 대문자 영어가 정확히 16글자 오는 문자열을 뜻함<br>
+  - 5-3. : 오탐지 제거 - 주석 제외 (grep -v)<br>
+    [정답]<br>
     - 앞의 결과물을 파이프( | )로 넘겨받아, 실제로 코드에 반영되지 않는 주석을 제거
        ```
        find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec grep -iHnE "password=|passwd=|SECRET_KEY|API_KEY|token|AKIA[0-9A-Z]{16}" {} + 2>/dev/null | grep -vE "^[[:space:]]*#"
