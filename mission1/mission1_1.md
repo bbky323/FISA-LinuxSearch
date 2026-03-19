@@ -120,7 +120,6 @@ awk -F: '{count[$1]++} END {for (f in count) print count[f], f}' error_report.tx
 | `for (f in count)` | 집계된 파일명을 하나씩 순회 |
 | `print count[f], f` | 파일별 개수와 파일명 출력 |
 
-<details>
 
 ### 5단계. 에러 개수가 많은 순으로 정렬하기
 
