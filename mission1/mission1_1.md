@@ -1,7 +1,7 @@
-#### 가정 상황
+## 가정 상황
 - 운영 중인 웹 서비스에서 새벽에 장애가 발생했다.
 - 개발팀은 “최근 수정된 로그 파일 중 에러가 집중된 파일부터 확인해 달라”고 요청했다.
-#### 문제
+## 문제
 - /linux_mission1/log 아래에서 다음 조건을 만족하는 로그 파일을 찾고, 해당 파일들에서 장애 원인이 될 만한 로그를 추출하시오.
     - 파일 이름이 .log 또는 .out로 끝나는 일반 파일
     - 최근 3일 이내 수정된 파일
@@ -10,7 +10,7 @@
     - ERROR / FATAL / Exception / timeout
     - 추가로, **파일별 에러 발생 건수**를 정리하여 함께 출력하시오.
     - Keyword: find, grep, awk
-#### 풀이
+## 풀이
 ### 1단계. 조건에 맞는 파일 찾기
 
 > 최근 3일 이내 수정된 `.log`, `.out` 일반 파일만 검색한다.
@@ -119,30 +119,6 @@ awk -F: '{count[$1]++} END {for (f in count) print count[f], f}' error_report.tx
 | `print count[f], f` | 파일별 개수와 파일명 출력 |
 
 <details>
-<summary>설명 보기</summary>
-
-- `awk`는 텍스트를 열 단위로 나누어 처리할 수 있는 도구이다.
-- `-F:`를 사용하면 `:`를 기준으로 한 줄을 나눈다.
-- `error_report.txt`의 첫 번째 필드는 파일 경로이므로 `$1`을 기준으로 개수를 셀 수 있다.
-- `count[$1]++`는 같은 파일명이 나올 때마다 1씩 증가시키는 의미이다.
-- 마지막에 `print`를 통해 파일별 에러 개수와 파일명을 출력한다.
-
-</details>
-
-#### 예시
-```text
-./linux_mission1/log/app.log:5:2026-03-18 09:01:21 ERROR Database connection failed
-```
-
-위 한 줄을 `:` 기준으로 나누면 다음과 같다.
-
-- `$1` → `./linux_mission1/log/app.log`
-- `$2` → `5`
-- 나머지 → 로그 내용
-
-즉, `$1`을 기준으로 파일별 개수를 셀 수 있다.
-
----
 
 ### 5단계. 에러 개수가 많은 순으로 정렬하기
 
@@ -169,15 +145,6 @@ awk -F: '{count[$1]++} END {for (f in count) print count[f], f}' error_report.tx
 
 </details>
 
----
+## 정답 결과
 
-## 전체 실습 흐름 요약
-
-1. `find`로 조건에 맞는 로그 파일을 찾는다.
-2. `grep`으로 에러 패턴이 포함된 줄만 추출한다.
-3. 검색 결과를 `error_report.txt`에 저장한다.
-4. `awk`로 파일별 에러 개수를 집계한다.
-5. `sort -nr`로 에러 개수가 많은 순으로 정렬한다.
-
-
-#### 정답 결과 <img width="1632" height="338" alt="image" src="./mission1_1.png" />
+<img width="1632" height="338" alt="image" src="./mission1_1.png" />
