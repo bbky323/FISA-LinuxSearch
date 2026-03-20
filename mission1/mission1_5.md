@@ -1,4 +1,4 @@
-#  ❓문제 1 - 평문 비밀번호 노출 여부 검사
+#  ❓문제 5 - 평문 비밀번호 노출 여부 검사
 
 ## 📚가정 상황
 - 개발자가 제보한 "평문 비밀번호 노출 의심" 건을 조사해야 합니다. 
@@ -112,64 +112,64 @@
   > [명령어 설명]<br>
      ```
      find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts
-     ```
+     ```<br>
     -검색을 시작할 3개의 경로를 한꺼번에 지정<br>
      ```
       -type f
-     ```
+     ```<br>
     - 디렉토리는 제외하고 순수한 파일만 찾기<br>
      ```
      -mtime -14
-     ```
+     ```<br>
     - 수정된 시간이 최근 14일 이내인 파일만 찾기<br>
     ```
       -name "*.conf" -o -name "*.env" ...
-    ```
+    ```<br>
     - 파일 이름의 조건을 주어 -o는 OR라는 뜻으로 나열된 확장 중 하나라도 일치하는 파일들만 찾기
 ### 5-2. : 민감 정보 패턴 감지 (grep + 정규표현식)<br>
   > [정답]<br>
     - 찾아낸 파일들의 내부 텍스트를 열어보고, 위험한 패턴이 있는지 검사<br>
     ```
     find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec grep -iHnE "password=|passwd=|SECRET_KEY|API_KEY|token|AKIA[0-9A-Z]{16}" {} +
-    ```
-  > [명령어 설명]
+    ```<br>
+  > [명령어 설명]<br>
     ```
      -exec [명령어] {} +
-    ```
-    - 앞에서 find로 찾은 파일들의 목록을 {}에 모은 후, 뒤에 적힌 grep 명령어를 한 번에 실행시킴
+    ```<br>
+    - 앞에서 find로 찾은 파일들의 목록을 {}에 모은 후, 뒤에 적힌 grep 명령어를 한 번에 실행시킴<br>
     ```
      AKIA[0-9A-Z]{16}
-    ```
-    - AWS Access Key를 찾는 정규표현식. AKIA로 시작하고 그 뒤에 숫자나 대문자 영어가 정확히 16글자 오는 문자열을 뜻함
+    ```<br>
+    - AWS Access Key를 찾는 정규표현식. AKIA로 시작하고 그 뒤에 숫자나 대문자 영어가 정확히 16글자 오는 문자열을 뜻함<br>
 ### 5-3. : 오탐지 제거 - 주석 제외 (grep -v)
   > [정답]<br>
-    - 앞의 결과물을 파이프( | )로 넘겨받아, 실제로 코드에 반영되지 않는 주석을 제거
+    - 앞의 결과물을 파이프( | )로 넘겨받아, 실제로 코드에 반영되지 않는 주석을 제거<br>
     ```
       find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec grep -iHnE "password=|passwd=|SECRET_KEY|API_KEY|token|AKIA[0-9A-Z]{16}" {} + 2>/dev/null | grep -vE "^[[:space:]]*#"
-    ```
-  > [명령어 설명]
+    ```<br>
+  > [명령어 설명]<br>
      ```
      2>/dev/null
-     ```
-    - 에러 메시지를 숨기는 용으로 권한이 없어서 못 읽는 파일이 있을 때 또는 Permission denied 에러로를 모아서 휴지통(/dev/null)으로 버림. 결과 화면을 깨끗하게 유지해주기 위함.
+     ```<br>
+    - 에러 메시지를 숨기는 용으로 권한이 없어서 못 읽는 파일이 있을 때 또는 Permission denied 에러로를 모아서 휴지통(/dev/null)으로 버림. 결과 화면을 깨끗하게 유지해주기 위함.<br>
      ```
      |
-     ```
-    - 파이프 : 앞 명령어의 출력 결과를 뒤 명령어의 입력으로 토스
+     ```<br>
+    - 파이프 : 앞 명령어의 출력 결과를 뒤 명령어의 입력으로 토스<br>
     ```
     grep -v
-    ```
-    - 매칭되는 것을 찾는 게 아니라, 반대로 매칭되는 것을 결과에서 제외
+    ```<br>
+    - 매칭되는 것을 찾는 게 아니라, 반대로 매칭되는 것을 결과에서 제외<br>
     ```
     "^[[:space:]]*#"
-    ```
+    ```<br>
     -주석을 의미하는 정규표현식
       -  ^ : 줄의 시작을 의미
       -  [[:space”]]* : 띄어쓰기 공백이나 탭이 0개 이상 있을 수 있다는 뜻
       -  #: 쉘 스크립트나 설정 파일의 주석 기호
 ### 5-4.  : 리포트 포맷팅 (awk)
   > [정답]<br>
-      - 파이프라인의 최종 목적지로, 지저분한 텍스트를 원하는 형태의 리포트로 조립
+      - 파이프라인의 최종 목적지로, 지저분한 텍스트를 원하는 형태의 리포트로 조립<br>
       ```
       find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \
       \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec \
@@ -179,19 +179,19 @@
           content = substr($0, length($1) + length($2) + 3)
           print "[위험탐지] 파일: " $1 " | 라인: " $2 " | 내용: " content
       }' > secret_scan_report.txt
-      ```
-  > [명령어 설명]
+      ```<br>
+  > [명령어 설명]<br>
     ```
     awk -F':'
-    ```
-    - 구분자를 콜론(:)으로 설정하여 텍스트를 쪼갬
+    ```<br>
+    - 구분자를 콜론(:)으로 설정하여 텍스트를 쪼갬<br>
     ```
     content = substr($0, length($1) + length($2) + 3)
-    ```
-    - substr 함수를 사용하여 해당 줄의 전체 내용($0)에서 “파일명 길이 + 줄번호 길이 + 콜론 2개 길이’만큼을 건너뛰고 나머지 뒷부분을 통째로 잘라옴
+    ```<br>
+    - substr 함수를 사용하여 해당 줄의 전체 내용($0)에서 “파일명 길이 + 줄번호 길이 + 콜론 2개 길이’만큼을 건너뛰고 나머지 뒷부분을 통째로 잘라옴<br>
     ```
     > secret_scan_report.txt
-    ```
+    ```<br>
     - awk가 화면에 뿌리려던 내용을 텍스트 파일에 덮어쓰기로 저장
 
 ## ✅정답 결과
