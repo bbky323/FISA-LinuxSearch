@@ -19,7 +19,7 @@
 
 ## 📝풀이
 ### 환경 세팅
-  - 1. setup_dummy.sh 파일 생성
+   - setup_dummy.sh 파일 생성
     ```
     vi setup_dummy.sh
     ```
@@ -79,15 +79,15 @@
     echo "=== 실습 환경 구성이 완료되었습니다! ==="
     echo "생성된 위치: $BASE_DIR"
     ```
-- 2. setup_dummy.sh 파일 실행 권한 부여
+- setup_dummy.sh 파일 실행 권한 부여
    ```
    chmod +x setup_dummy.sh
    ```
-- 3. setup_dummy.sh 파일 실행
+- setup_dummy.sh 파일 실행
    ```
    ./setup_dummy.sh
    ```
-- 4.폴더 구조
+- 폴더 구조
    ```
    ubuntu@server01:~/problem5$ tree practice_env
    practice_env
@@ -104,7 +104,7 @@
                └── database.yml
    ```
 ### 5-1. 대상 파일 추려내기 (find 기초)
-  > [정답]
+  > [정답]<br>
     - 지정한 폴더에서 조건에 맞는 파일들만 솎아내는 작업
       ```
       find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \)
@@ -127,7 +127,7 @@
     ```
     - 파일 이름의 조건을 주어 -o는 OR라는 뜻으로 나열된 확장 중 하나라도 일치하는 파일들만 찾기
 ### 5-2. : 민감 정보 패턴 감지 (grep + 정규표현식)<br>
-  > [정답]
+  > [정답]<br>
     - 찾아낸 파일들의 내부 텍스트를 열어보고, 위험한 패턴이 있는지 검사
     ```
     find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec grep -iHnE "password=|passwd=|SECRET_KEY|API_KEY|token|AKIA[0-9A-Z]{16}" {} +
@@ -142,7 +142,7 @@
     ```
     - AWS Access Key를 찾는 정규표현식. AKIA로 시작하고 그 뒤에 숫자나 대문자 영어가 정확히 16글자 오는 문자열을 뜻함
 ### 5-3. : 오탐지 제거 - 주석 제외 (grep -v)
-  > [정답]
+  > [정답]<br>
     - 앞의 결과물을 파이프( | )로 넘겨받아, 실제로 코드에 반영되지 않는 주석을 제거
     ```
       find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec grep -iHnE "password=|passwd=|SECRET_KEY|API_KEY|token|AKIA[0-9A-Z]{16}" {} + 2>/dev/null | grep -vE "^[[:space:]]*#"
@@ -168,7 +168,7 @@
       -  [[:space”]]* : 띄어쓰기 공백이나 탭이 0개 이상 있을 수 있다는 뜻
       -  #: 쉘 스크립트나 설정 파일의 주석 기호
 ### 5-4.  : 리포트 포맷팅 (awk)
-  > [정답]
+  > [정답]<br>
       - 파이프라인의 최종 목적지로, 지저분한 텍스트를 원하는 형태의 리포트로 조립
       ```
       find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \
