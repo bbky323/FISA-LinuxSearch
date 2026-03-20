@@ -20,10 +20,10 @@
 ## 📝풀이
 ### 환경 세팅
    - setup_dummy.sh 파일 생성
-    ```
+   ```
     vi setup_dummy.sh
-    ```
-    ```
+   ```
+   ```
     #!/bin/bash
 
     # 실습용 최상위 가상 디렉토리 설정 (현재 위치에 생성)
@@ -78,7 +78,7 @@
      
     echo "=== 실습 환경 구성이 완료되었습니다! ==="
     echo "생성된 위치: $BASE_DIR"
-    ```
+   ```
 - setup_dummy.sh 파일 실행 권한 부여
    ```
    chmod +x setup_dummy.sh
@@ -105,30 +105,30 @@
    ```
 ### 5-1. 대상 파일 추려내기 (find 기초)
   > [정답]<br>
-    - 지정한 폴더에서 조건에 맞는 파일들만 솎아내는 작업
-      ```
+    - 지정한 폴더에서 조건에 맞는 파일들만 솎아내는 작업<br>
+   ```
       find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \)
-      ```
-  > [명령어 설명]
+   ```
+  > [명령어 설명]<br>
      ```
      find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts
      ```
-    -검색을 시작할 3개의 경로를 한꺼번에 지정
+    -검색을 시작할 3개의 경로를 한꺼번에 지정<br>
      ```
       -type f
      ```
-    - 디렉토리는 제외하고 순수한 파일만 찾기
+    - 디렉토리는 제외하고 순수한 파일만 찾기<br>
      ```
      -mtime -14
      ```
-    - 수정된 시간이 최근 14일 이내인 파일만 찾기
+    - 수정된 시간이 최근 14일 이내인 파일만 찾기<br>
     ```
       -name "*.conf" -o -name "*.env" ...
     ```
     - 파일 이름의 조건을 주어 -o는 OR라는 뜻으로 나열된 확장 중 하나라도 일치하는 파일들만 찾기
 ### 5-2. : 민감 정보 패턴 감지 (grep + 정규표현식)<br>
   > [정답]<br>
-    - 찾아낸 파일들의 내부 텍스트를 열어보고, 위험한 패턴이 있는지 검사
+    - 찾아낸 파일들의 내부 텍스트를 열어보고, 위험한 패턴이 있는지 검사<br>
     ```
     find practice_env/etc practice_env/opt/app/config practice_env/home/dev/scripts -type f -mtime -14 \( -name "*.conf" -o -name "*.env" -o -name "*.yml" -o -name "*.yaml" -o -name "*.sh" \) -exec grep -iHnE "password=|passwd=|SECRET_KEY|API_KEY|token|AKIA[0-9A-Z]{16}" {} +
     ```
