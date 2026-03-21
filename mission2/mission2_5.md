@@ -1,12 +1,12 @@
 # 🔐문제5: Shell 스크립트를 활용한 JSON/YAML 설정 파일 보안 및 문법 자동 감사
 
-## 가정 상황
+## 📚가정 상황
 
 배포 직전, 보안팀이 “설정 파일과 샘플 데이터 파일에 비밀번호, API 키, 토큰이 평문으로 남아 있지 않은지” 최종 점검하라고 요청했다.
 
 ---
 
-## ❓문제
+## 🤔문제
 
 프로젝트 디렉토리 아래의 ```.json, .yaml, .yml``` 파일을 대상으로 다음을 수행하시오.
 
@@ -19,8 +19,11 @@
     - 결과를 **syntax_errors.txt**에 저장
 
 
-#### 테스트 데이터
-- setup_audit.sh를 사용하여 총 6개의 json 및 yaml파일 생성(정상 파일 2개, 문법 오류 파일 2개, 키 하드코딩 파일 2개)
+### 테스트 데이터
+- setup_audit.sh를 사용하여 총 6개의 json 및 yaml파일 및 txt 파일 1개, java 파일 1개 생성.
+
+**1. 데이터 생성 쉘 스크립트**
+
 ```jsx
 # 1. 정상 파일 (환경 변수 사용 - 통과 대상)
 cat <<EOF > config_safe.json
@@ -60,115 +63,100 @@ auth:
   passwd: "hardcoded_val"
 EOF
 
-echo "테스트 데이터 생성 완료 (audit_workspace 디렉토리)"
+# 4. 필터링 테스트용 파일 (검색 제외 대상)
+cat <<EOF > dummy_config.txt
+서버 접속 정보 및 토큰 관리 문서
+비밀번호: password1234
+발급받은 apiKey: ignore_txt_key_999
+EOF
+
+cat <<EOF > DummyConfig.java
+public class DummyConfig {
+    private String password = "java_hardcoded_password";
+    private String apiKey = "java_dummy_api_key";
+}
+EOF
+
+echo "테스트 데이터 생성 완료"
 ```
----
+<br>
 
-## 💡풀이
+**2. 스크립트 권한 부여**
 
-### 1. 보안 감사 스크립트 작성(run_audit.sh)
-- 프로젝트 내의 설정 파일(.json, .yaml, .yml)을 스캔하여 문법 오류 및 소스 코드 내에 직접 작성된 하드코딩된 중요 정보(비밀번호, 토큰 등)를 찾아내는 스크립트
-
-**1.1 로그 파일 지정 및 초기화**
-
-```jsx
-#!/bin/bash
-
-SYNTAX_LOG="syntax_errors.txt"
-SECRET_LOG="hardcoded_secrets.txt"
-
-> "$SYNTAX_LOG"
-> "$SECRET_LOG"
-
-# 검색 대상 키
-TARGET_KEYS="password|passwd|secret|token|apiKey"
-
-```
-
-**1.2 대상 파일 탐색**
-```jsx
-echo "검수를 시작합니다..."
-
-find . -maxdepth 2 -type f \( -name "*.json" -o -name "*.yaml" -o -name "*.yml" \) | while read -r file; do
-```
-- find 명령어를 사용하여 최대 2단계 하위 디렉토리(-maxdepth 2)까지의 json, yaml, yml 파일들을 찾아 하나씩 검사하기 위해 while 문으로 전달
-
-**1.3 JSON 파일 처리 로직**
-```jsx
-    if [[ "$file" == *.json ]]; then
-        if ! jq . "$file" > /dev/null 2>&1; then
-            echo "[문법 오류] $file" >> "$SYNTAX_LOG"
-        else
-            res=$(jq -r --arg keys "$TARGET_KEYS" 'paths(scalars) as $p | select($p[-1] | test($keys; "i")) | getpath($p) as $v | select($v | test("^\\$\\{.*\\}$") | not) | "\($p | join(".")): \($v)"' "$file")
-            if [[ -n "$res" ]]; then
-                echo "[$file] 발견된 항목:" >> "$SECRET_LOG"
-                echo "$res" | sed "s/^/  - /" >> "$SECRET_LOG"
-                echo "" >> "$SECRET_LOG"
-            fi
-        fi
-```
-- **문법 검증:**  jq를 사용하여 JSON 파싱을 시도.
-- **비밀 값 추출:** jq의 내장 함수를 사용해 키 이름이 **TARGET_KEYS**와 일치하는지 확인. 
-  - 일치하는 항목 중 그 값이 환경 변수 형태(```^\\$\\{.*\\}$```)가 아닌 것만 골라내어 로그에 기록.
-
-**1.4 YAML 파일 처리 로직**
-```jsx
-    # [2] YAML 처리
-    elif [[ "$file" == *.yaml || "$file" == *.yml ]]; then
-        if ! yq "." "$file" > /dev/null 2>&1; then
-            echo "[문법 오류] $file" >> "$SYNTAX_LOG"
-        else
-
-            res=$(yq "." "$file" | grep -iE "\"($TARGET_KEYS)\":\s*\"[^\$]" | grep -v "\${")
-            
-            if [[ -n "$res" ]]; then
-                echo "[$file] 발견된 항목:" >> "$SECRET_LOG"
-                echo "$res" | sed 's/^[[:space:]]*/  - /' >> "$SECRET_LOG"
-                echo "" >> "$SECRET_LOG"
-            fi
-        fi
-    fi
-done
-
-echo "검수 완료!"
-```
-- **문법 검증:** JSON과 마찬가지로 yq "."를 통해 YAML 문법의 유효성을 검사
-- **비밀 값 추출:** yq로 읽어들인 결과를 grep 명령어의 정규표현식과 결합하여 타겟 키워드를 찾음. 
-  - 값의 시작이 $ 기호가 아닌 경우(하드코딩된 경우)를 필터링하여 기록
-
-### 2. 스크립트 권한 부여 및 실행
-#### 3.1 스크립트 권한 부여
-``` chmod +x setup_audit.sh run_audit.sh ```
+``` chmod +x setup_audit.sh ```
 - 쉘 스크립트에 실행권한을 부여
 
-#### 3.2 쉘 스크립트 실행
+<br>
+
+**3. 쉘 스크립트 실행**
 ```jsx
 # 데이터 생성
 ./setup_audit.sh
 
-# 감사 실행
-./run_audit.sh 
+```
+
+### 데이터 생성 결과
+
+<img src="./mission2_5_imgs/mission2_5_1.png" width="500">
+---
+
+## 📝풀이
+
+### 1단계. 결과를 저장할 로그 파일 지정 및 초기화
+> 결과를 저장할 txt 파일을 results 폴더에 생성하고, 검색할 키워드 목록을 쉘 변수에 임시 저장
+```bash
+export SYNTAX_LOG="results/syntax_errors.txt" SECRET_LOG="results/hardcoded_secrets.txt" TARGET_KEYS="password|passwd|secret|token|apiKey"; > "$SYNTAX_LOG"; > "$SECRET_LOG"
+```
+
+<img src="./mission2_5_imgs/mission2_5_2.png" width="500">
+
+### 2단계: 대상 파일 검색 및 모아두기
+> json, yaml, yml 파일만 찾아서 ```target_files.txt``` 파일에 모아두기
+``` bash
+find . -type f \( -name "*.json" -o -name "*.yaml" -o -name "*.yml" \) > target_files.txt
+```
+
+<img src="./mission2_5_imgs/mission2_5_3.png" width="500">
+
+### 3단계: JSON 파일 분리 및 처리
+> 목록에서 grep 명령어를 사용하여 ```.json``` 파일만 걸러내어 ```jq```로 문법 오류와 하드코딩된 값을 검사하고 ```txt``` 파일에 기록
+
+```bash
+cat target_files.txt | grep "\.json$" | while read file; do
+    if ! jq . "$file" >/dev/null 2>&1; then
+        echo "[문법 오류] $file" >> "$SYNTAX_LOG"
+    else
+        res=$(jq -r --arg keys "$TARGET_KEYS" 'paths(scalars) as $p | select($p[-1] | test($keys; "i")) | getpath($p) as $v | select($v | test("^\\$\\{.*\\}$") | not) | "\($p | join(".")): \($v)"' "$file")
+        if [[ -n "$res" ]]; then
+            echo -e "[$file] 발견된 항목:\n$(echo "$res" | sed 's/^/  - /')\n" >> "$SECRET_LOG"
+        fi
+    fi
+done
+```
+
+### 4단계: YAML/YML 파일 분리 및 처리
+> 목록에서 ```grep``` 명령어를 사용하여 ```.yaml``` 및 ```.yml``` 파일만 걸러내어 ```yq```로 문법 오류와 하드코딩된 값을 검사하고 ```txt``` 파일에 기록
+```bash
+cat target_files.txt | grep -E "\.(yaml|yml)$" | while read file; do
+    if ! yq "." "$file" >/dev/null 2>&1; then
+        echo "[문법 오류] $file" >> "$SYNTAX_LOG"
+    else
+        res=$(yq "." "$file" | grep -iE "($TARGET_KEYS):\s*\"?[^\$]" | grep -v "\${")
+        if [[ -n "$res" ]]; then
+            echo -e "[$file] 발견된 항목:\n$(echo "$res" | sed 's/^[[:space:]]*/  - /')\n" >> "$SECRET_LOG"
+        fi
+    fi
+done
 ```
 
 ---
-## 📊결과
+## ✅정답 결과
 ### 1. 키 값이 하드코딩 된 파일을 저장한 hardcoded_secrets.txt 
 
-```jsx
-[./app_vulnerable.yml] 발견된 항목:
-  - "token": "9a8b7c6d5e4f",
-  - "passwd": "hardcoded_val"
-
-[./db_vulnerable.json] 발견된 항목:
-  - password: plain_password_1234
-  - apiKey: AKIA_EXAMPLETODISCOVER
-```
+<img src="./mission2_5_imgs/mission2_5_4.png" width="500">
 
 ### 2. 문법 에러가 있는 파일을 저장한 syntax_errors.txt 
 
-```jsx
-[문법 오류] ./error_incomplete.json
-[문법 오류] ./error_bad_indent.yaml
-```
+<img src="./mission2_5_imgs/mission2_5_5.png" width="500">
 
 
