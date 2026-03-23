@@ -1,4 +1,6 @@
-## 🛡️가정 상황
+#  ❓문제 2 SSH 공격 로그 분석
+
+## 📚가정 상황
 
 보안팀으로부터 다음과 같은 알림을 받았다.
 
@@ -12,7 +14,7 @@
 
 ---
 
-## ❓문제
+## 🤔문제
 
 시스템 인증 로그 (auth.log)를 분석하여 다음을 수행하시오. 
 
@@ -63,7 +65,7 @@ Mar 19 01:27:55 server sshd[1253]: Failed password for invalid user admin from 2
 
 ---
 
-## 💡풀이
+## 📝풀이
 
 ```jsx
 grep "Failed password" auth.log > temp.txt
@@ -107,7 +109,8 @@ grep-Eo"([0-9]{1,3}\.){3}[0-9]{1,3}" temp.txt \
 |awk'{count[$1]++} END {for (ip in count) print count[ip], ip}' \
 > ssh_attack_summary.txt
 ```
-## 📊정답 결과 <img width="1632" height="338" alt="image" src="./mission1_2.png" />
+## ✅정답 결과 
+<img width="1632" height="338" alt="image" src="./mission1_2.png" />
 
 
 
