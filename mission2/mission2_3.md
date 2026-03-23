@@ -1,4 +1,6 @@
-## 🛡️상황 가정
+# ❓ 문제 3 - Kubernetes 배포 YAML 검수
+
+## 📚가정 상황
 
 신규 서비스 배포 전에 DevOps 팀이 Kubernetes YAML 매니페스트를 검토 중이다.
 
@@ -6,7 +8,7 @@
 
 ---
 
-## ❓문제
+## 🤔문제
 
 검수 스크립트 만들기
 
@@ -72,7 +74,7 @@ data:
 
 ---
 
-## 💡풀이
+## 📝풀이
 
 ### 1️단계. YAML 문법 검사
 
@@ -181,5 +183,5 @@ rm-f temp_env.txt
 echo-e"\n===== 검사 완료 =====" >>$OUTPUT
 ```
 
-## 📊정답 결과 
+## ✅정답 결과 
 <img width="600" height="800" alt="image" src="./mission2_3.png" />
